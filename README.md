@@ -7,4 +7,4 @@
 
 ## Welcome to Kairox 👋
 
-Kairox is a simple, lightweight Groq AI interface. Create an account, enter your Groq API key, select your model, and your ready to go! The interface is highly customisable, with advanced features and memory. [Use Kairox today ▶](https://kairox-ai.onrender.com)
+Kairox is a simple, lightweight Groq AI interface. Create an account, enter your Groq API key, select your model, and your ready to go! The interface is highly customisable, with advanced features and memory. [Use Kairox today ◹](https://kairox-ai.onrender.com)
