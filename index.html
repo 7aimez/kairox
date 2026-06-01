@@ -73,19 +73,19 @@
         }
 
         .new-chat-btn {
-            width: 40px;
-            height: 40px;
+            width: calc(100% - 24px);
+            margin: 0 12px 20px 12px;
+            padding: 10px 14px;
             border: 1px solid var(--border);
-            border-radius: 50%;
+            border-radius: var(--radius-sm);
             background: var(--bg);
             color: var(--text);
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            margin-left: 12px;
+            gap: 10px;
             transition: all 0.2s;
             flex-shrink: 0;
         }
@@ -219,6 +219,7 @@
             justify-content: center;
             font-size: 16px;
             transition: all 0.2s;
+            order: -1;
         }
 
         .sidebar-toggle-header:hover { background: var(--surface-hover); color: var(--text); }
@@ -310,6 +311,29 @@
             padding: 4px 0;
         }
 
+        /* Lists */
+        .message-content ul, .message-content ol {
+            margin: 8px 0 8px 20px;
+            padding-left: 4px;
+        }
+
+        .message-content ul {
+            list-style-type: disc;
+        }
+
+        .message-content ol {
+            list-style-type: decimal;
+        }
+
+        .message-content li {
+            margin-bottom: 4px;
+            padding-left: 4px;
+        }
+
+        .message-content li:last-child {
+            margin-bottom: 0;
+        }
+
         /* File Attachments */
         .file-chip {
             display: inline-flex;
@@ -333,6 +357,7 @@
             font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
             font-size: 13px;
             border: 1px solid #333;
+            position: relative;
         }
 
         .code-header {
@@ -345,18 +370,23 @@
             font-size: 12px;
             font-family: inherit;
             border-bottom: 1px solid #333;
+            padding-right: 120px;
         }
 
         .code-actions {
             display: flex;
             gap: 4px;
+            position: absolute;
+            top: 6px;
+            right: 8px;
         }
 
         .code-btn {
-            background: transparent;
+            background: #3c4043;
             border: none;
             color: #9aa0a6;
-            padding: 6px 10px;
+            width: 28px;
+            height: 28px;
             border-radius: 6px;
             font-size: 13px;
             cursor: pointer;
@@ -364,10 +394,10 @@
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
         }
 
-        .code-btn:hover { background: #3c4043; color: #e8eaed; }
+        .code-btn:hover { background: #5f6368; color: #e8eaed; }
 
         .code-content {
             padding: 16px;
@@ -377,8 +407,8 @@
             line-height: 1.6;
         }
 
-        /* Preview & Run Containers */
-        .preview-frame, .run-output {
+        /* Run Output */
+        .run-output {
             width: 100%;
             border: none;
             border-top: 1px solid #333;
@@ -386,12 +416,7 @@
             display: none;
         }
 
-        .preview-frame.active, .run-output.active { display: block; }
-
-        .preview-frame {
-            height: 350px;
-            background: white;
-        }
+        .run-output.active { display: block; }
 
         .run-output {
             padding: 16px;
@@ -405,6 +430,59 @@
         .run-output pre { margin: 0; white-space: pre-wrap; line-height: 1.6; }
         .run-output .error { color: #ff6b6b; }
         .run-output .success { color: #69db7c; }
+
+        /* Preview Modal - Fullscreen */
+        .preview-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: none;
+            flex-direction: column;
+            z-index: 300;
+        }
+
+        .preview-modal-overlay.active { display: flex; }
+
+        .preview-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            height: 60px;
+            flex-shrink: 0;
+            background: var(--bg);
+        }
+
+        .preview-modal-header h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .preview-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .preview-modal-close:hover { background: var(--surface-hover); color: var(--text); }
+
+        .preview-modal-frame {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
 
         /* Floating Input */
         .input-dock {
@@ -567,7 +645,7 @@
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-        /* Modals */
+        /* Rename Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -661,6 +739,7 @@
         </div>
         <button class="new-chat-btn" onclick="createNewChat()" title="New chat">
             <i class="fa-solid fa-plus"></i>
+            <span>New chat</span>
         </button>
         <div class="chat-list" id="chatList"></div>
     </aside>
@@ -672,11 +751,12 @@
                 <button class="menu-toggle" onclick="toggleMobileSidebar()">
                     <i class="fa-solid fa-bars"></i>
                 </button>
+                <button class="sidebar-toggle-header" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">
+                    <i class="fa-solid fa-chevron-left" id="toggleIcon"></i>
+                </button>
                 <span class="top-title" id="topTitle">Kairox</span>
             </div>
-            <button class="sidebar-toggle-header" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">
-                <i class="fa-solid fa-chevron-left" id="toggleIcon"></i>
-            </button>
+            <div style="width: 36px;"></div>
         </div>
 
         <div class="chat-area" id="chatArea">
@@ -708,6 +788,17 @@
             <div class="disclaimer">Kairox may display inaccurate info. Double-check responses.</div>
         </div>
     </main>
+
+    <!-- Preview Modal - Fullscreen -->
+    <div class="preview-modal-overlay" id="previewModal">
+        <div class="preview-modal-header">
+            <h3>HTML Preview</h3>
+            <button class="preview-modal-close" onclick="closePreviewModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <iframe class="preview-modal-frame" id="previewModalFrame"></iframe>
+    </div>
 
     <!-- Rename Modal -->
     <div class="modal-overlay" id="renameModal">
@@ -785,6 +876,26 @@
         function toggleMobileSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
         }
+
+        // --- Preview Modal ---
+        function openPreviewModal(htmlCode) {
+            document.getElementById('previewModalFrame').srcdoc = htmlCode;
+            document.getElementById('previewModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.remove('active');
+            document.getElementById('previewModalFrame').srcdoc = '';
+            document.body.style.overflow = '';
+        }
+
+        // Close preview modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePreviewModal();
+            }
+        });
 
         // --- Chat Management ---
         function createNewChat() {
@@ -1044,28 +1155,23 @@
 
                     if (action === 'copy') {
                         navigator.clipboard.writeText(code).then(() => {
-                            const originalHTML = this.innerHTML;
-                            this.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+                            const originalIcon = this.innerHTML;
+                            this.innerHTML = '<i class="fa-solid fa-check"></i>';
+                            this.style.color = '#69db7c';
                             setTimeout(() => {
-                                this.innerHTML = originalHTML;
+                                this.innerHTML = originalIcon;
+                                this.style.color = '';
                             }, 2000);
                         });
                     } else if (action === 'preview') {
-                        const frame = document.getElementById(`preview-${codeId}`);
-                        const isActive = frame.classList.toggle('active');
-                        if (isActive) {
-                            frame.srcdoc = code;
-                            this.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide';
-                        } else {
-                            this.innerHTML = '<i class="fa-solid fa-eye"></i> Preview';
-                        }
+                        openPreviewModal(code);
                     } else if (action === 'run') {
                         const output = document.getElementById(`run-${codeId}`);
                         const isActive = output.classList.toggle('active');
                         if (isActive) {
                             runPython(code, output, this);
                         } else {
-                            this.innerHTML = '<i class="fa-solid fa-play"></i> Run';
+                            this.innerHTML = '<i class="fa-solid fa-play"></i>';
                         }
                     }
                 });
@@ -1075,51 +1181,80 @@
         function formatContent(text) {
             if (!text) return '';
 
-            let html = escapeHtml(text);
-
-            // Code blocks with actions
+            // Store code blocks before escaping
+            const codeBlocks = [];
             let codeIdCounter = 0;
-            html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+
+            // Extract code blocks first
+            let processed = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
                 const codeId = `code-${Date.now()}-${codeIdCounter++}`;
                 const language = (lang || 'text').toLowerCase();
                 const cleanCode = code.trim();
-                const encodedCode = encodeURIComponent(cleanCode);
 
-                let actions = `<button class="code-btn" data-action="copy" data-code-id="${codeId}" data-code="${encodedCode}"><i class="fa-regular fa-copy"></i> Copy</button>`;
+                let actions = `<button class="code-btn" data-action="copy" data-code-id="${codeId}" data-code="${encodeURIComponent(cleanCode)}" title="Copy"><i class="fa-regular fa-copy"></i></button>`;
 
                 if (language === 'html' || language === 'htm') {
-                    actions += `<button class="code-btn" data-action="preview" data-code-id="${codeId}" data-code="${encodedCode}"><i class="fa-solid fa-eye"></i> Preview</button>`;
+                    actions += `<button class="code-btn" data-action="preview" data-code-id="${codeId}" data-code="${encodeURIComponent(cleanCode)}" title="Preview"><i class="fa-solid fa-eye"></i></button>`;
                 }
 
                 if (language === 'python' || language === 'py') {
-                    actions += `<button class="code-btn" data-action="run" data-code-id="${codeId}" data-code="${encodedCode}"><i class="fa-solid fa-play"></i> Run</button>`;
+                    actions += `<button class="code-btn" data-action="run" data-code-id="${codeId}" data-code="${encodeURIComponent(cleanCode)}" title="Run"><i class="fa-solid fa-play"></i></button>`;
                 }
 
-                return `
+                const blockHtml = `
                     <div class="code-block">
                         <div class="code-header">
                             <span>${language}</span>
                             <div class="code-actions">${actions}</div>
                         </div>
                         <div class="code-content">${escapeHtml(cleanCode)}</div>
-                        ${(language === 'html' || language === 'htm') ? `<iframe class="preview-frame" id="preview-${codeId}" sandbox="allow-scripts"></iframe>` : ''}
-                        ${(language === 'python' || language === 'py') ? `<div class="run-output" id="run-${codeId}"><pre>Click Run to execute Python code...</pre></div>` : ''}
+                        ${(language === 'python' || language === 'py') ? `<div class="run-output" id="run-${codeId}"><pre>Click <i class="fa-solid fa-play"></i> to execute Python code...</pre></div>` : ''}
                     </div>
                 `;
+
+                codeBlocks.push({ id: codeId, html: blockHtml });
+                return `{{CODE_BLOCK_${codeBlocks.length - 1}}}`;
             });
 
+            // Now escape the rest of the text
+            processed = escapeHtml(processed);
+
             // Inline code
-            html = html.replace(/`([^`]+)`/g, '<code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.9em;">$1</code>');
+            processed = processed.replace(/`([^`]+)`/g, '<code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.9em;">$1</code>');
 
             // Bold & Italic
-            html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            processed = processed.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            processed = processed.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-            // Line breaks
-            html = html.replace(/\n/g, '<br>');
+            // Lists - handle before line breaks
+            // Numbered lists
+            processed = processed.replace(/(?:^|\n)(\d+\.\s+[^\n]+(?:\n\d+\.\s+[^\n]+)*)/g, (match, listContent) => {
+                const items = listContent.trim().split('\n').map(line => {
+                    const item = line.replace(/^\d+\.\s+/, '');
+                    return `<li>${item}</li>`;
+                }).join('');
+                return `<ol>${items}</ol>`;
+            });
 
-            return html;
+            // Bullet lists
+            processed = processed.replace(/(?:^|\n)([-*]\s+[^\n]+(?:\n[-*]\s+[^\n]+)*)/g, (match, listContent) => {
+                const items = listContent.trim().split('\n').map(line => {
+                    const item = line.replace(/^[-*]\s+/, '');
+                    return `<li>${item}</li>`;
+                }).join('');
+                return `<ul>${items}</ul>`;
+            });
+
+            // Line breaks (but not inside lists)
+            processed = processed.replace(/\n/g, '<br>');
+
+            // Restore code blocks
+            codeBlocks.forEach((block, i) => {
+                processed = processed.replace(`{{CODE_BLOCK_${i}}}`, block.html);
+            });
+
+            return processed;
         }
 
         // --- Python Execution (Pyodide) ---
@@ -1157,27 +1292,67 @@
         }
 
         async function runPython(code, outputDiv, btn) {
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
             try {
                 const pyodide = await loadPyodideRuntime();
 
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Running...';
+                // Use a custom output capture approach to avoid I/O errors
+                const captureCode = `
+import sys
+from io import StringIO
 
-                // Capture stdout
-                let output = [];
-                pyodide.setStdout({ batched: (text) => { output.push(text); } });
-                pyodide.setStderr({ batched: (text) => { output.push(text); } });
+# Create a custom output buffer
+_output_buffer = []
 
-                await pyodide.runPythonAsync(code);
+class _CustomStdout:
+    def write(self, text):
+        if text:
+            _output_buffer.append(str(text))
+    def flush(self):
+        pass
 
-                const result = output.join('') || 'Code executed successfully (no output)';
-                outputDiv.innerHTML = `<pre class="success">${escapeHtml(result)}</pre>`;
-                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide';
+# Replace stdout/stderr
+_old_stdout = sys.stdout
+_old_stderr = sys.stderr
+sys.stdout = _CustomStdout()
+sys.stderr = _CustomStdout()
+
+try:
+${code.split('\n').map(line => '    ' + line).join('\n')}
+finally:
+    sys.stdout = _old_stdout
+    sys.stderr = _old_stderr
+
+# Return the captured output
+print('__PYODIDE_OUTPUT_START__')
+print(''.join(_output_buffer))
+print('__PYODIDE_OUTPUT_END__')
+`;
+
+                const result = await pyodide.runPythonAsync(captureCode);
+                
+                // Extract output between markers
+                const output = result.toString();
+                const startMarker = '__PYODIDE_OUTPUT_START__';
+                const endMarker = '__PYODIDE_OUTPUT_END__';
+                const startIdx = output.indexOf(startMarker);
+                const endIdx = output.indexOf(endMarker);
+                
+                let capturedOutput = '';
+                if (startIdx !== -1 && endIdx !== -1) {
+                    capturedOutput = output.substring(startIdx + startMarker.length, endIdx).trim();
+                } else {
+                    capturedOutput = output.trim();
+                }
+
+                const displayOutput = capturedOutput || 'Code executed successfully (no output)';
+                outputDiv.innerHTML = `<pre class="success">${escapeHtml(displayOutput)}</pre>`;
+                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
 
             } catch (err) {
                 outputDiv.innerHTML = `<pre class="error">${escapeHtml(err.toString())}</pre>`;
-                btn.innerHTML = '<i class="fa-solid fa-play"></i> Run';
+                btn.innerHTML = '<i class="fa-solid fa-play"></i>';
             }
         }
 
