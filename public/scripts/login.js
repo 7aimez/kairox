@@ -183,19 +183,19 @@ function continueAsGuest() {
 }
 
 (async function initLogin() {
-    await migrateLegacyPasswords();
-
     const savedUser = localStorage.getItem('kairox_current_user');
-    if (!savedUser) return;
-
-    try {
-        const parsedUser = JSON.parse(savedUser);
-        if (parsedUser && typeof parsedUser === 'object' && parsedUser.username) {
-            location.replace('./chat.html');
-            return;
+    if (savedUser) {
+        try {
+            const parsedUser = JSON.parse(savedUser);
+            if (parsedUser && typeof parsedUser === 'object' && parsedUser.username) {
+                location.replace('./chat.html');
+                return;
+            }
+            localStorage.removeItem('kairox_current_user');
+        } catch {
+            localStorage.removeItem('kairox_current_user');
         }
-        localStorage.removeItem('kairox_current_user');
-    } catch {
-        localStorage.removeItem('kairox_current_user');
     }
+
+    await migrateLegacyPasswords();
 })();
