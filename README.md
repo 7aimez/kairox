@@ -2,6 +2,7 @@
   <img width="200px" height="200px" alt="kairox-logo" src="static/logo.png" />
   <h1>Kairox AI</h1>
   <b>MUPA Edition</b>
+  <hr /><br />
 </div>
 
 - HTML: `/public/*.html`
