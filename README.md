@@ -3,5 +3,6 @@
   <h1>Kairox AI</h1>
   <b>MUPA Edition</b>
 </div>
+
 - HTML: `/public/*.html`
 - Scripts: `/public/scripts/*.js`
