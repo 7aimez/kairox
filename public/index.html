@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kairox</title>
+</head>
+<body>
+    <script>
+        const savedUser = localStorage.getItem('kairox_current_user');
+        if (!savedUser) {
+            location.replace('./login.html');
+        } else {
+            try {
+                const parsedUser = JSON.parse(savedUser);
+                if (parsedUser && typeof parsedUser === 'object' && parsedUser.username) {
+                    location.replace('./chat.html');
+                } else {
+                    localStorage.removeItem('kairox_current_user');
+                    location.replace('./login.html');
+                }
+            } catch {
+                localStorage.removeItem('kairox_current_user');
+                location.replace('./login.html');
+            }
+        }
+    </script>
+</body>
+</html>
