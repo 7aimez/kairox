@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kairox Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #f8f9fa;
+            --surface-hover: #f1f3f4;
+            --text: #1f1f1f;
+            --text-secondary: #5f6368;
+            --border: #dadce0;
+            --accent: #1a73e8;
+            --accent-hover: #1557b0;
+            --radius-sm: 12px;
+            --error-color: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .auth-logo {
+            font-size: 42px;
+            font-weight: 400;
+            background: linear-gradient(90deg, #4285f4, #34a853, #fbbc04, #ea4335);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-form.hidden {
+            display: none;
+        }
+
+        .auth-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .auth-input-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .auth-input {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .auth-input:focus {
+            border-color: var(--accent);
+        }
+
+        .auth-btn {
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .auth-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .auth-btn.secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .auth-btn.secondary:hover {
+            background: var(--surface-hover);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin: 8px 0;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .profile-pic-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-pic-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .profile-pic-preview:hover {
+            border-color: var(--accent);
+        }
+
+        .profile-pic-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-pic-preview i {
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .profile-pic-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .auth-error {
+            color: var(--error-color);
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .auth-error.active {
+            display: block;
+        }
+
+        .auth-info {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-logo">Kairox</div>
+        <div class="auth-subtitle">Your AI companion</div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchAuthTab('login')" id="loginTab">Sign in</button>
+            <button class="auth-tab" onclick="switchAuthTab('register')" id="registerTab">Create account</button>
+        </div>
+
+        <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+            <div class="auth-input-group">
+                <label>Username</label>
+                <input type="text" class="auth-input" id="loginUsername" placeholder="Enter username" required>
+            </div>
+            <div class="auth-input-group">
+                <label>Password</label>
+                <input type="password" class="auth-input" id="loginPassword" placeholder="Enter password" required>
+            </div>
+            <div class="auth-error" id="loginError"></div>
+            <button type="submit" class="auth-btn">Sign in</button>
+        </form>
+
+        <form class="auth-form hidden" id="registerForm" onsubmit="handleRegister(event)">
+            <div class="profile-pic-upload">
+                <div class="profile-pic-preview" onclick="document.getElementById('registerPicInput').click()" id="registerPicPreview">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+                <input type="file" id="registerPicInput" accept="image/*" style="display: none;" onchange="handleProfilePic(this)">
+                <span class="profile-pic-label" onclick="document.getElementById('registerPicInput').click()">Add profile picture</span>
+            </div>
+            <div class="auth-input-group">
+                <label>Username</label>
+                <input type="text" class="auth-input" id="registerUsername" placeholder="Choose a username" required>
+            </div>
+            <div class="auth-input-group">
+                <label>Password</label>
+                <input type="password" class="auth-input" id="registerPassword" placeholder="Choose a password" required>
+            </div>
+            <div class="auth-input-group">
+                <label>Confirm Password</label>
+                <input type="password" class="auth-input" id="registerConfirmPassword" placeholder="Confirm password" required>
+            </div>
+            <div class="auth-input-group">
+                <label>Groq API Key <span style="color: var(--accent);">*</span></label>
+                <input type="password" class="auth-input" id="registerApiKey" placeholder="gsk_..." required>
+                <span class="auth-info">Your API key is stored locally and never shared.</span>
+            </div>
+            <div class="auth-error" id="registerError"></div>
+            <button type="submit" class="auth-btn">Create account</button>
+        </form>
+
+        <div class="auth-divider">or</div>
+        <button class="auth-btn secondary" onclick="continueAsGuest()">
+            <i class="fa-solid fa-user" style="margin-right: 8px;"></i>
+            Continue as guest
+        </button>
+    </div>
+
+    <script src="./scripts/login.js"></script>
+</body>
+</html>

@@ -122,7 +122,6 @@
         }
 
         function enterApp() {
-            document.getElementById('authScreen').classList.add('hidden');
             updateProfileUI();
             initApp();
         }
@@ -130,12 +129,7 @@
         function logout() {
             currentUser = null;
             localStorage.removeItem('kairox_current_user');
-            document.getElementById('profileDropdown').classList.remove('active');
-            document.getElementById('authScreen').classList.remove('hidden');
-            switchAuthTab('login');
-            document.getElementById('loginForm').reset();
-            document.getElementById('registerForm').reset();
-            document.body.removeAttribute('data-theme');
+            location.replace('./login.html');
         }
 
         function updateProfileUI() {
@@ -421,11 +415,27 @@
         // --- Init ---
         function init() {
             const savedUser = localStorage.getItem('kairox_current_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                loadSettings();
-                enterApp();
+            if (!savedUser) {
+                location.replace('./login.html');
+                return;
             }
+
+            try {
+                currentUser = JSON.parse(savedUser);
+            } catch {
+                localStorage.removeItem('kairox_current_user');
+                location.replace('./login.html');
+                return;
+            }
+
+            if (!currentUser) {
+                localStorage.removeItem('kairox_current_user');
+                location.replace('./login.html');
+                return;
+            }
+
+            loadSettings();
+            enterApp();
         }
 
         function initApp() {
