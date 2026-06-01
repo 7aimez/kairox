@@ -33,6 +33,205 @@
             overflow: hidden;
         }
 
+        /* Auth Screen */
+        .auth-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .auth-screen.hidden {
+            display: none;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .auth-logo {
+            font-size: 42px;
+            font-weight: 400;
+            background: linear-gradient(90deg, #4285f4, #34a853, #fbbc04, #ea4335);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-form.hidden {
+            display: none;
+        }
+
+        .auth-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .auth-input-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .auth-input {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .auth-input:focus {
+            border-color: var(--accent);
+        }
+
+        .auth-btn {
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .auth-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .auth-btn.secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .auth-btn.secondary:hover {
+            background: var(--surface-hover);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin: 8px 0;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .profile-pic-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-pic-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .profile-pic-preview:hover {
+            border-color: var(--accent);
+        }
+
+        .profile-pic-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-pic-preview i {
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .profile-pic-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .auth-error {
+            color: #dc2626;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .auth-error.active {
+            display: block;
+        }
+
         /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
@@ -230,6 +429,81 @@
             color: var(--text-secondary);
         }
 
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .profile-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .profile-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-btn i {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            padding: 8px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 150;
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        .profile-dropdown-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .profile-dropdown-item:hover {
+            background: var(--surface-hover);
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 6px 0;
+        }
+
         .chat-area {
             flex: 1;
             overflow-y: auto;
@@ -289,9 +563,18 @@
             font-size: 14px;
             font-weight: 500;
             flex-shrink: 0;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
         }
 
-        .user .avatar { background: #e8f0fe; color: var(--accent); }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user .avatar { background: #e8f0fe; color: var(--accent); border: none; }
         .assistant .avatar { background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); }
 
         .message-content {
@@ -711,6 +994,7 @@
             .sidebar-toggle-header { display: none; }
             .input-dock { bottom: 16px; left: 50% !important; max-width: 760px !important; }
             .chat-area { padding-bottom: 160px; }
+            .auth-container { padding: 24px; }
         }
 
         @keyframes fadeIn {
@@ -731,6 +1015,64 @@
     </style>
 </head>
 <body>
+
+    <!-- Auth Screen -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-container">
+            <div class="auth-logo">Kairox</div>
+            <div class="auth-subtitle">Your AI companion</div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')" id="loginTab">Sign in</button>
+                <button class="auth-tab" onclick="switchAuthTab('register')" id="registerTab">Create account</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="auth-input-group">
+                    <label>Username</label>
+                    <input type="text" class="auth-input" id="loginUsername" placeholder="Enter username" required>
+                </div>
+                <div class="auth-input-group">
+                    <label>Password</label>
+                    <input type="password" class="auth-input" id="loginPassword" placeholder="Enter password" required>
+                </div>
+                <div class="auth-error" id="loginError"></div>
+                <button type="submit" class="auth-btn">Sign in</button>
+            </form>
+
+            <!-- Register Form -->
+            <form class="auth-form hidden" id="registerForm" onsubmit="handleRegister(event)">
+                <div class="profile-pic-upload">
+                    <div class="profile-pic-preview" onclick="document.getElementById('registerPicInput').click()" id="registerPicPreview">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <input type="file" id="registerPicInput" accept="image/*" style="display: none;" onchange="handleProfilePic(this, 'register')">
+                    <span class="profile-pic-label" onclick="document.getElementById('registerPicInput').click()">Add profile picture</span>
+                </div>
+                <div class="auth-input-group">
+                    <label>Username</label>
+                    <input type="text" class="auth-input" id="registerUsername" placeholder="Choose a username" required>
+                </div>
+                <div class="auth-input-group">
+                    <label>Password</label>
+                    <input type="password" class="auth-input" id="registerPassword" placeholder="Choose a password" required>
+                </div>
+                <div class="auth-input-group">
+                    <label>Confirm Password</label>
+                    <input type="password" class="auth-input" id="registerConfirmPassword" placeholder="Confirm password" required>
+                </div>
+                <div class="auth-error" id="registerError"></div>
+                <button type="submit" class="auth-btn">Create account</button>
+            </form>
+
+            <div class="auth-divider">or</div>
+            <button class="auth-btn secondary" onclick="continueAsGuest()">
+                <i class="fa-solid fa-user" style="margin-right: 8px;"></i>
+                Continue as guest
+            </button>
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -756,7 +1098,22 @@
                 </button>
                 <span class="top-title" id="topTitle">Kairox</span>
             </div>
-            <div style="width: 36px;"></div>
+            <div class="top-right">
+                <button class="profile-btn" id="profileBtn" onclick="toggleProfileDropdown()">
+                    <i class="fa-solid fa-user"></i>
+                </button>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-dropdown-item" onclick="showProfileInfo()">
+                        <i class="fa-solid fa-user"></i>
+                        <span id="dropdownUsername">Guest</span>
+                    </div>
+                    <div class="profile-dropdown-divider"></div>
+                    <div class="profile-dropdown-item" onclick="logout()">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span>Sign out</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="chat-area" id="chatArea">
@@ -825,9 +1182,165 @@
         let pyodideReady = false;
         let pyodideLoading = false;
         let sidebarCollapsed = false;
+        let currentUser = null;
+        let tempProfilePic = null;
+
+        // --- Auth ---
+        function switchAuthTab(tab) {
+            document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+            document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+            document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+            document.getElementById('loginError').classList.remove('active');
+            document.getElementById('registerError').classList.remove('active');
+        }
+
+        function handleProfilePic(input, type) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                tempProfilePic = e.target.result;
+                const preview = document.getElementById(type + 'PicPreview');
+                preview.innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showAuthError(form, msg) {
+            const el = document.getElementById(form + 'Error');
+            el.textContent = msg;
+            el.classList.add('active');
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirmPassword').value;
+
+            if (password !== confirm) {
+                showAuthError('register', 'Passwords do not match');
+                return;
+            }
+
+            if (password.length < 4) {
+                showAuthError('register', 'Password must be at least 4 characters');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('kairox_users') || '[]');
+            if (users.find(u => u.username === username)) {
+                showAuthError('register', 'Username already taken');
+                return;
+            }
+
+            const user = {
+                username,
+                password, // In production, hash this!
+                profilePic: tempProfilePic || null,
+                createdAt: Date.now()
+            };
+
+            users.push(user);
+            localStorage.setItem('kairox_users', JSON.stringify(users));
+            
+            // Auto login
+            currentUser = { username, profilePic: user.profilePic };
+            localStorage.setItem('kairox_current_user', JSON.stringify(currentUser));
+            
+            // Reset form
+            document.getElementById('registerForm').reset();
+            document.getElementById('registerPicPreview').innerHTML = '<i class="fa-solid fa-camera"></i>';
+            tempProfilePic = null;
+
+            enterApp();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('kairox_users') || '[]');
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (!user) {
+                showAuthError('login', 'Invalid username or password');
+                return;
+            }
+
+            currentUser = { username: user.username, profilePic: user.profilePic };
+            localStorage.setItem('kairox_current_user', JSON.stringify(currentUser));
+            
+            document.getElementById('loginForm').reset();
+            enterApp();
+        }
+
+        function continueAsGuest() {
+            currentUser = { username: 'Guest', profilePic: null, isGuest: true };
+            localStorage.setItem('kairox_current_user', JSON.stringify(currentUser));
+            enterApp();
+        }
+
+        function enterApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            updateProfileUI();
+            initApp();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('kairox_current_user');
+            document.getElementById('profileDropdown').classList.remove('active');
+            document.getElementById('authScreen').classList.remove('hidden');
+            switchAuthTab('login');
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+        }
+
+        function updateProfileUI() {
+            if (!currentUser) return;
+            
+            document.getElementById('dropdownUsername').textContent = currentUser.username;
+            
+            const btn = document.getElementById('profileBtn');
+            if (currentUser.profilePic) {
+                btn.innerHTML = `<img src="${currentUser.profilePic}" alt="${currentUser.username}">`;
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-user"></i>`;
+            }
+        }
+
+        function toggleProfileDropdown() {
+            document.getElementById('profileDropdown').classList.toggle('active');
+        }
+
+        function showProfileInfo() {
+            document.getElementById('profileDropdown').classList.remove('active');
+            // Could show a profile modal here
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('profileDropdown');
+            const btn = document.getElementById('profileBtn');
+            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
 
         // --- Init ---
         function init() {
+            const savedUser = localStorage.getItem('kairox_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                enterApp();
+            }
+        }
+
+        function initApp() {
             const saved = localStorage.getItem('kairox_chats');
             const savedCollapsed = localStorage.getItem('kairox_sidebar_collapsed');
             
@@ -890,7 +1403,6 @@
             document.body.style.overflow = '';
         }
 
-        // Close preview modal on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closePreviewModal();
@@ -1045,7 +1557,7 @@
                     }
                 }
             } catch (e) {
-                // Silently fail, keep default title
+                // Silently fail
             }
         }
 
@@ -1113,6 +1625,13 @@
             return div.innerHTML;
         }
 
+        function getUserAvatar() {
+            if (currentUser?.profilePic) {
+                return `<img src="${currentUser.profilePic}" alt="${currentUser.username}">`;
+            }
+            return 'Y';
+        }
+
         function renderMessage(msg) {
             const wrapper = document.getElementById('messagesWrapper');
             const emptyState = wrapper.querySelector('.empty-state');
@@ -1124,7 +1643,6 @@
 
             let contentHtml = formatContent(msg.content);
 
-            // Render file attachments
             let filesHtml = '';
             if (msg.files && msg.files.length > 0) {
                 filesHtml = '<div style="margin-top:8px;">' + msg.files.map(f => `
@@ -1135,8 +1653,10 @@
                 `).join('') + '</div>';
             }
 
+            const avatarContent = isUser ? getUserAvatar() : 'K';
+
             div.innerHTML = `
-                <div class="avatar">${isUser ? 'Y' : 'K'}</div>
+                <div class="avatar">${avatarContent}</div>
                 <div class="message-content">
                     ${contentHtml}
                     ${filesHtml}
@@ -1146,7 +1666,6 @@
             wrapper.appendChild(div);
             scrollToBottom();
 
-            // Attach event listeners to code buttons
             div.querySelectorAll('.code-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const action = this.dataset.action;
@@ -1181,11 +1700,9 @@
         function formatContent(text) {
             if (!text) return '';
 
-            // Store code blocks before escaping
             const codeBlocks = [];
             let codeIdCounter = 0;
 
-            // Extract code blocks first
             let processed = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
                 const codeId = `code-${Date.now()}-${codeIdCounter++}`;
                 const language = (lang || 'text').toLowerCase();
@@ -1216,19 +1733,14 @@
                 return `{{CODE_BLOCK_${codeBlocks.length - 1}}}`;
             });
 
-            // Now escape the rest of the text
             processed = escapeHtml(processed);
 
-            // Inline code
             processed = processed.replace(/`([^`]+)`/g, '<code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.9em;">$1</code>');
 
-            // Bold & Italic
             processed = processed.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
             processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             processed = processed.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-            // Lists - handle before line breaks
-            // Numbered lists
             processed = processed.replace(/(?:^|\n)(\d+\.\s+[^\n]+(?:\n\d+\.\s+[^\n]+)*)/g, (match, listContent) => {
                 const items = listContent.trim().split('\n').map(line => {
                     const item = line.replace(/^\d+\.\s+/, '');
@@ -1237,7 +1749,6 @@
                 return `<ol>${items}</ol>`;
             });
 
-            // Bullet lists
             processed = processed.replace(/(?:^|\n)([-*]\s+[^\n]+(?:\n[-*]\s+[^\n]+)*)/g, (match, listContent) => {
                 const items = listContent.trim().split('\n').map(line => {
                     const item = line.replace(/^[-*]\s+/, '');
@@ -1246,10 +1757,8 @@
                 return `<ul>${items}</ul>`;
             });
 
-            // Line breaks (but not inside lists)
             processed = processed.replace(/\n/g, '<br>');
 
-            // Restore code blocks
             codeBlocks.forEach((block, i) => {
                 processed = processed.replace(`{{CODE_BLOCK_${i}}}`, block.html);
             });
@@ -1257,7 +1766,7 @@
             return processed;
         }
 
-        // --- Python Execution (Pyodide) ---
+        // --- Python Execution ---
         async function loadPyodideRuntime() {
             if (pyodideReady) return window.pyodide;
             if (pyodideLoading) {
@@ -1297,12 +1806,10 @@
             try {
                 const pyodide = await loadPyodideRuntime();
 
-                // Use a custom output capture approach to avoid I/O errors
                 const captureCode = `
 import sys
 from io import StringIO
 
-# Create a custom output buffer
 _output_buffer = []
 
 class _CustomStdout:
@@ -1312,7 +1819,6 @@ class _CustomStdout:
     def flush(self):
         pass
 
-# Replace stdout/stderr
 _old_stdout = sys.stdout
 _old_stderr = sys.stderr
 sys.stdout = _CustomStdout()
@@ -1324,7 +1830,6 @@ finally:
     sys.stdout = _old_stdout
     sys.stderr = _old_stderr
 
-# Return the captured output
 print('__PYODIDE_OUTPUT_START__')
 print(''.join(_output_buffer))
 print('__PYODIDE_OUTPUT_END__')
@@ -1332,7 +1837,6 @@ print('__PYODIDE_OUTPUT_END__')
 
                 const result = await pyodide.runPythonAsync(captureCode);
                 
-                // Extract output between markers
                 const output = result.toString();
                 const startMarker = '__PYODIDE_OUTPUT_START__';
                 const endMarker = '__PYODIDE_OUTPUT_END__';
@@ -1375,19 +1879,16 @@ print('__PYODIDE_OUTPUT_END__')
             saveChats();
             renderMessage(userMsg);
 
-            // Generate title if needed
             if (chat.needsTitle && content) {
                 generateChatTitle(chat, content);
             }
 
-            // Clear input
             input.value = '';
             input.style.height = 'auto';
             attachedFiles = [];
             renderFilePreview();
             document.getElementById('sendBtn').disabled = true;
 
-            // Typing indicator
             const wrapper = document.getElementById('messagesWrapper');
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message assistant';
@@ -1405,7 +1906,6 @@ print('__PYODIDE_OUTPUT_END__')
             wrapper.appendChild(typingDiv);
             scrollToBottom();
 
-            // Prepare API messages
             let apiMessages = chat.messages.map(m => ({
                 role: m.role,
                 content: m.content + (m.files && m.files.length > 0 ? '\n\n[Attached files: ' + m.files.map(f => f.name).join(', ') + ']' : '')
@@ -1464,7 +1964,6 @@ print('__PYODIDE_OUTPUT_END__')
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        // Close modal on overlay click
         document.getElementById('renameModal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeModal();
         });
