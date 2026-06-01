@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kairox</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
             --bg: #ffffff;
@@ -18,6 +19,7 @@
             --radius-sm: 12px;
             --shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
             --shadow-lg: 0 4px 8px 3px rgba(60,64,67,0.15);
+            --sidebar-width: 280px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,14 +35,24 @@
 
         /* Sidebar */
         .sidebar {
-            width: 280px;
+            width: var(--sidebar-width);
             background: var(--surface);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             padding: 16px 12px;
-            transition: transform 0.3s ease;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease, opacity 0.25s ease;
             z-index: 100;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+            padding: 16px 0;
+            border-right: none;
+            opacity: 0;
         }
 
         .sidebar-header {
@@ -49,6 +61,7 @@
             justify-content: space-between;
             padding: 8px 12px;
             margin-bottom: 16px;
+            min-width: 0;
         }
 
         .logo {
@@ -56,37 +69,41 @@
             font-weight: 500;
             color: var(--text);
             letter-spacing: -0.5px;
+            white-space: nowrap;
         }
 
         .new-chat-btn {
-            width: 100%;
-            padding: 12px 16px;
+            width: 40px;
+            height: 40px;
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            border-radius: 50%;
             background: var(--bg);
             color: var(--text);
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
             margin-bottom: 20px;
-            transition: background 0.2s;
+            margin-left: 12px;
+            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .new-chat-btn:hover { background: var(--surface-hover); }
+        .new-chat-btn:hover { background: var(--surface-hover); border-color: var(--text-secondary); }
 
         .chat-list {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             gap: 4px;
+            min-width: 0;
         }
 
         .chat-item {
-            padding: 10px 12px;
+            padding: 10px 32px 10px 12px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 14px;
@@ -96,23 +113,41 @@
             gap: 10px;
             transition: all 0.2s;
             position: relative;
+            min-width: 0;
         }
 
         .chat-item:hover { background: var(--surface-hover); color: var(--text); }
         .chat-item.active { background: #e8f0fe; color: var(--accent); font-weight: 500; }
 
+        .chat-item i {
+            flex-shrink: 0;
+        }
+
+        .chat-item-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
         .chat-item-actions {
             display: none;
             position: absolute;
-            right: 8px;
-            gap: 4px;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            gap: 2px;
+            background: inherit;
+            padding-left: 4px;
+            border-radius: 4px;
         }
 
         .chat-item:hover .chat-item-actions { display: flex; }
 
         .icon-btn {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border: none;
             background: transparent;
             cursor: pointer;
@@ -121,6 +156,8 @@
             align-items: center;
             justify-content: center;
             color: var(--text-secondary);
+            font-size: 11px;
+            flex-shrink: 0;
         }
 
         .icon-btn:hover { background: var(--border); color: var(--text); }
@@ -132,6 +169,7 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .top-bar {
@@ -139,8 +177,15 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 20px;
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .top-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .menu-toggle {
@@ -150,9 +195,33 @@
             cursor: pointer;
             padding: 8px;
             border-radius: 50%;
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
         }
 
         .menu-toggle:hover { background: var(--surface-hover); }
+
+        .sidebar-toggle-header {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .sidebar-toggle-header:hover { background: var(--surface-hover); color: var(--text); }
 
         .top-title {
             font-size: 16px;
@@ -163,7 +232,7 @@
         .chat-area {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
+            padding: 24px 24px 200px 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -263,86 +332,99 @@
             overflow: hidden;
             font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
             font-size: 13px;
+            border: 1px solid #333;
         }
 
         .code-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 16px;
+            padding: 10px 16px;
             background: #2d2d2d;
             color: #9aa0a6;
             font-size: 12px;
             font-family: inherit;
+            border-bottom: 1px solid #333;
         }
 
         .code-actions {
             display: flex;
-            gap: 8px;
+            gap: 4px;
         }
 
         .code-btn {
-            background: #3c4043;
+            background: transparent;
             border: none;
-            color: #e8eaed;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+            color: #9aa0a6;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
             cursor: pointer;
             font-family: inherit;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .code-btn:hover { background: #5f6368; }
+        .code-btn:hover { background: #3c4043; color: #e8eaed; }
 
         .code-content {
             padding: 16px;
             overflow-x: auto;
             color: #e8eaed;
             white-space: pre;
+            line-height: 1.6;
         }
 
         /* Preview & Run Containers */
         .preview-frame, .run-output {
             width: 100%;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            margin-top: 8px;
-            background: white;
+            border: none;
+            border-top: 1px solid #333;
+            background: #1e1e1e;
             display: none;
         }
 
         .preview-frame.active, .run-output.active { display: block; }
 
         .preview-frame {
-            height: 300px;
-            border: none;
+            height: 350px;
+            background: white;
         }
 
         .run-output {
-            padding: 12px;
-            font-family: monospace;
+            padding: 16px;
+            font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
             font-size: 13px;
-            max-height: 300px;
+            max-height: 350px;
             overflow-y: auto;
+            color: #e8eaed;
         }
 
-        .run-output pre { margin: 0; white-space: pre-wrap; }
+        .run-output pre { margin: 0; white-space: pre-wrap; line-height: 1.6; }
+        .run-output .error { color: #ff6b6b; }
+        .run-output .success { color: #69db7c; }
 
         /* Floating Input */
         .input-dock {
             position: fixed;
-            bottom: 32px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100%;
+            width: calc(100% - 48px);
             max-width: 760px;
-            padding: 0 24px;
             z-index: 50;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
+            transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1), left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar:not(.collapsed) ~ .main .input-dock {
+            left: calc(50% + var(--sidebar-width) / 2);
+            max-width: 720px;
         }
 
         .input-container {
@@ -351,15 +433,16 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             box-shadow: var(--shadow-lg);
-            padding: 12px 16px;
+            padding: 16px 20px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             transition: box-shadow 0.2s;
         }
 
         .input-container:focus-within {
             box-shadow: 0 6px 12px 4px rgba(60,64,67,0.2);
+            border-color: #bdc1c6;
         }
 
         .input-row {
@@ -373,12 +456,13 @@
             border: none;
             outline: none;
             font-size: 16px;
-            line-height: 1.5;
+            line-height: 1.6;
             resize: none;
             max-height: 200px;
-            min-height: 24px;
+            min-height: 28px;
             font-family: inherit;
             background: transparent;
+            padding: 4px 0;
         }
 
         .input-actions {
@@ -388,8 +472,8 @@
         }
 
         .action-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border: none;
             background: transparent;
             cursor: pointer;
@@ -399,14 +483,15 @@
             justify-content: center;
             color: var(--text-secondary);
             transition: all 0.2s;
+            font-size: 18px;
         }
 
         .action-btn:hover { background: var(--surface-hover); color: var(--text); }
         .action-btn.active { color: var(--accent); }
 
         .send-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--accent);
             color: white;
@@ -416,6 +501,7 @@
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
+            font-size: 16px;
         }
 
         .send-btn:hover { background: var(--accent-hover); }
@@ -432,10 +518,11 @@
             align-items: center;
             gap: 6px;
             background: var(--surface);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
             color: var(--text-secondary);
+            border: 1px solid var(--border);
         }
 
         .file-tag button {
@@ -443,9 +530,17 @@
             border: none;
             cursor: pointer;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 16px;
             line-height: 1;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
+
+        .file-tag button:hover { background: var(--border); color: var(--text); }
 
         .disclaimer {
             font-size: 12px;
@@ -529,10 +624,15 @@
                 top: 0;
                 bottom: 0;
                 transform: translateX(-100%);
+                width: var(--sidebar-width);
+                opacity: 1;
             }
             .sidebar.open { transform: translateX(0); }
-            .menu-toggle { display: block; }
-            .input-dock { bottom: 16px; }
+            .sidebar.collapsed { transform: translateX(-100%); width: var(--sidebar-width); }
+            .menu-toggle { display: flex; }
+            .sidebar-toggle-header { display: none; }
+            .input-dock { bottom: 16px; left: 50% !important; max-width: 760px !important; }
+            .chat-area { padding-bottom: 160px; }
         }
 
         @keyframes fadeIn {
@@ -559,28 +659,24 @@
         <div class="sidebar-header">
             <span class="logo">Kairox</span>
         </div>
-        <button class="new-chat-btn" onclick="createNewChat()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            New chat
+        <button class="new-chat-btn" onclick="createNewChat()" title="New chat">
+            <i class="fa-solid fa-plus"></i>
         </button>
         <div class="chat-list" id="chatList"></div>
     </aside>
 
     <!-- Main -->
-    <main class="main">
+    <main class="main" id="main">
         <div class="top-bar">
-            <button class="menu-toggle" onclick="toggleSidebar()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+            <div class="top-left">
+                <button class="menu-toggle" onclick="toggleMobileSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="top-title" id="topTitle">Kairox</span>
+            </div>
+            <button class="sidebar-toggle-header" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">
+                <i class="fa-solid fa-chevron-left" id="toggleIcon"></i>
             </button>
-            <span class="top-title" id="topTitle">Kairox</span>
-            <div style="width: 36px;"></div>
         </div>
 
         <div class="chat-area" id="chatArea">
@@ -593,23 +689,18 @@
         </div>
 
         <!-- Floating Input -->
-        <div class="input-dock">
+        <div class="input-dock" id="inputDock">
             <div class="input-container">
                 <div class="file-preview" id="filePreview"></div>
                 <div class="input-row">
                     <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFiles(this.files)">
                     <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="Upload file">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
-                        </svg>
+                        <i class="fa-solid fa-paperclip"></i>
                     </button>
                     <textarea id="messageInput" placeholder="Ask anything..." rows="1" onkeydown="handleKeydown(event)"></textarea>
                     <div class="input-actions">
                         <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="22" y1="2" x2="11" y2="13"></line>
-                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                            </svg>
+                            <i class="fa-solid fa-arrow-up"></i>
                         </button>
                     </div>
                 </div>
@@ -640,10 +731,21 @@
         let currentChatId = null;
         let attachedFiles = [];
         let renameTargetId = null;
+        let pyodideReady = false;
+        let pyodideLoading = false;
+        let sidebarCollapsed = false;
 
         // --- Init ---
         function init() {
             const saved = localStorage.getItem('kairox_chats');
+            const savedCollapsed = localStorage.getItem('kairox_sidebar_collapsed');
+            
+            if (savedCollapsed === 'true') {
+                sidebarCollapsed = true;
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.getElementById('toggleIcon').classList.replace('fa-chevron-left', 'fa-chevron-right');
+            }
+
             if (saved) {
                 chats = JSON.parse(saved);
                 renderChatList();
@@ -658,6 +760,32 @@
             localStorage.setItem('kairox_chats', JSON.stringify(chats));
         }
 
+        function saveSidebarState() {
+            localStorage.setItem('kairox_sidebar_collapsed', sidebarCollapsed);
+        }
+
+        // --- Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('toggleIcon');
+            
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+            } else {
+                sidebar.classList.remove('collapsed');
+                icon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+            }
+            
+            saveSidebarState();
+        }
+
+        function toggleMobileSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
         // --- Chat Management ---
         function createNewChat() {
             const id = Date.now().toString();
@@ -666,7 +794,8 @@
                 title: 'New chat',
                 messages: [],
                 files: [],
-                createdAt: Date.now()
+                createdAt: Date.now(),
+                needsTitle: true
             };
             chats.unshift(chat);
             saveChats();
@@ -705,22 +834,14 @@
             const list = document.getElementById('chatList');
             list.innerHTML = chats.map(chat => `
                 <div class="chat-item ${chat.id === currentChatId ? 'active' : ''}" onclick="loadChat('${chat.id}')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;">${escapeHtml(chat.title)}</span>
+                    <i class="fa-regular fa-message" style="font-size: 14px; flex-shrink: 0;"></i>
+                    <span class="chat-item-title">${escapeHtml(chat.title)}</span>
                     <div class="chat-item-actions" onclick="event.stopPropagation()">
                         <button class="icon-btn" onclick="openRename('${chat.id}')" title="Rename">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
+                            <i class="fa-solid fa-pen"></i>
                         </button>
                         <button class="icon-btn" onclick="deleteChat('${chat.id}')" title="Delete">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
+                            <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
@@ -756,6 +877,7 @@
                 const chat = chats.find(c => c.id === renameTargetId);
                 if (chat) {
                     chat.title = name;
+                    chat.needsTitle = false;
                     saveChats();
                     renderChatList();
                     if (currentChatId === renameTargetId) {
@@ -764,6 +886,56 @@
                 }
             }
             closeModal();
+        }
+
+        // --- AI Title Generation ---
+        async function generateChatTitle(chat, userMessage) {
+            if (!chat.needsTitle) return;
+
+            try {
+                const response = await fetch(GROQ_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GROQ_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: MODEL,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a helpful assistant. Generate a very short, concise title (3-5 words max) for a chat based on the user\'s first message. Respond with ONLY the title, no quotes, no punctuation, no explanation.'
+                            },
+                            {
+                                role: 'user',
+                                content: userMessage
+                            }
+                        ],
+                        temperature: 0.3,
+                        max_tokens: 20
+                    })
+                });
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+                const title = data.choices[0].message.content.trim()
+                    .replace(/^["']|["']$/g, '')
+                    .replace(/[.!?]$/, '')
+                    .slice(0, 40);
+
+                if (title) {
+                    chat.title = title;
+                    chat.needsTitle = false;
+                    saveChats();
+                    renderChatList();
+                    if (currentChatId === chat.id) {
+                        document.getElementById('topTitle').textContent = title;
+                    }
+                }
+            } catch (e) {
+                // Silently fail, keep default title
+            }
         }
 
         // --- File Handling ---
@@ -795,12 +967,9 @@
             }
             preview.innerHTML = attachedFiles.map((file, i) => `
                 <div class="file-tag">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                        <polyline points="13 2 13 9 20 9"></polyline>
-                    </svg>
+                    <i class="fa-regular fa-file" style="font-size: 12px;"></i>
                     ${escapeHtml(file.name)}
-                    <button onclick="removeFile(${i})">×</button>
+                    <button onclick="removeFile(${i})"><i class="fa-solid fa-xmark" style="font-size: 10px;"></i></button>
                 </div>
             `).join('');
         }
@@ -849,10 +1018,7 @@
             if (msg.files && msg.files.length > 0) {
                 filesHtml = '<div style="margin-top:8px;">' + msg.files.map(f => `
                     <div class="file-chip">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                            <polyline points="13 2 13 9 20 9"></polyline>
-                        </svg>
+                        <i class="fa-regular fa-file" style="font-size: 12px;"></i>
                         ${escapeHtml(f.name)}
                     </div>
                 `).join('') + '</div>';
@@ -874,30 +1040,32 @@
                 btn.addEventListener('click', function() {
                     const action = this.dataset.action;
                     const codeId = this.dataset.codeId;
-                    const code = this.dataset.code;
+                    const code = decodeURIComponent(this.dataset.code);
 
                     if (action === 'copy') {
                         navigator.clipboard.writeText(code).then(() => {
-                            this.textContent = 'Copied!';
-                            setTimeout(() => this.textContent = 'Copy', 2000);
+                            const originalHTML = this.innerHTML;
+                            this.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+                            setTimeout(() => {
+                                this.innerHTML = originalHTML;
+                            }, 2000);
                         });
                     } else if (action === 'preview') {
                         const frame = document.getElementById(`preview-${codeId}`);
-                        frame.classList.toggle('active');
-                        if (frame.classList.contains('active')) {
+                        const isActive = frame.classList.toggle('active');
+                        if (isActive) {
                             frame.srcdoc = code;
-                            this.textContent = 'Hide';
+                            this.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide';
                         } else {
-                            this.textContent = 'Preview';
+                            this.innerHTML = '<i class="fa-solid fa-eye"></i> Preview';
                         }
                     } else if (action === 'run') {
                         const output = document.getElementById(`run-${codeId}`);
-                        output.classList.toggle('active');
-                        if (output.classList.contains('active')) {
-                            runPython(code, output);
-                            this.textContent = 'Hide';
+                        const isActive = output.classList.toggle('active');
+                        if (isActive) {
+                            runPython(code, output, this);
                         } else {
-                            this.textContent = 'Run';
+                            this.innerHTML = '<i class="fa-solid fa-play"></i> Run';
                         }
                     }
                 });
@@ -915,15 +1083,16 @@
                 const codeId = `code-${Date.now()}-${codeIdCounter++}`;
                 const language = (lang || 'text').toLowerCase();
                 const cleanCode = code.trim();
+                const encodedCode = encodeURIComponent(cleanCode);
 
-                let actions = `<button class="code-btn" data-action="copy" data-code-id="${codeId}" data-code="${escapeHtml(cleanCode)}">Copy</button>`;
+                let actions = `<button class="code-btn" data-action="copy" data-code-id="${codeId}" data-code="${encodedCode}"><i class="fa-regular fa-copy"></i> Copy</button>`;
 
                 if (language === 'html' || language === 'htm') {
-                    actions += `<button class="code-btn" data-action="preview" data-code-id="${codeId}" data-code="${escapeHtml(cleanCode)}">Preview</button>`;
+                    actions += `<button class="code-btn" data-action="preview" data-code-id="${codeId}" data-code="${encodedCode}"><i class="fa-solid fa-eye"></i> Preview</button>`;
                 }
 
                 if (language === 'python' || language === 'py') {
-                    actions += `<button class="code-btn" data-action="run" data-code-id="${codeId}" data-code="${escapeHtml(cleanCode)}">Run</button>`;
+                    actions += `<button class="code-btn" data-action="run" data-code-id="${codeId}" data-code="${encodedCode}"><i class="fa-solid fa-play"></i> Run</button>`;
                 }
 
                 return `
@@ -933,8 +1102,8 @@
                             <div class="code-actions">${actions}</div>
                         </div>
                         <div class="code-content">${escapeHtml(cleanCode)}</div>
-                        ${(language === 'html' || language === 'htm') ? `<iframe class="preview-frame" id="preview-${codeId}"></iframe>` : ''}
-                        ${(language === 'python' || language === 'py') ? `<div class="run-output" id="run-${codeId}"><pre>Click "Run" to execute Python code...</pre></div>` : ''}
+                        ${(language === 'html' || language === 'htm') ? `<iframe class="preview-frame" id="preview-${codeId}" sandbox="allow-scripts"></iframe>` : ''}
+                        ${(language === 'python' || language === 'py') ? `<div class="run-output" id="run-${codeId}"><pre>Click Run to execute Python code...</pre></div>` : ''}
                     </div>
                 `;
             });
@@ -954,34 +1123,61 @@
         }
 
         // --- Python Execution (Pyodide) ---
-        async function runPython(code, outputDiv) {
-            outputDiv.innerHTML = '<pre>Loading Python runtime...</pre>';
-
-            if (!window.loadPyodide) {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js';
-                document.head.appendChild(script);
-                await new Promise((resolve, reject) => {
-                    script.onload = resolve;
-                    script.onerror = () => reject(new Error('Failed to load Pyodide'));
-                });
+        async function loadPyodideRuntime() {
+            if (pyodideReady) return window.pyodide;
+            if (pyodideLoading) {
+                while (pyodideLoading) {
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                return window.pyodide;
             }
 
+            pyodideLoading = true;
+
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js';
+                script.onload = async () => {
+                    try {
+                        window.pyodide = await loadPyodide();
+                        pyodideReady = true;
+                        pyodideLoading = false;
+                        resolve(window.pyodide);
+                    } catch (err) {
+                        pyodideLoading = false;
+                        reject(err);
+                    }
+                };
+                script.onerror = () => {
+                    pyodideLoading = false;
+                    reject(new Error('Failed to load Pyodide'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        async function runPython(code, outputDiv, btn) {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+
             try {
-                let pyodide = window.pyodide;
-                if (!pyodide) {
-                    pyodide = await loadPyodide();
-                    window.pyodide = pyodide;
-                }
+                const pyodide = await loadPyodideRuntime();
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Running...';
 
                 // Capture stdout
-                let output = '';
-                pyodide.setStdout({ batched: (text) => { output += text + '\n'; } });
+                let output = [];
+                pyodide.setStdout({ batched: (text) => { output.push(text); } });
+                pyodide.setStderr({ batched: (text) => { output.push(text); } });
 
                 await pyodide.runPythonAsync(code);
-                outputDiv.innerHTML = `<pre>${escapeHtml(output || 'Code executed successfully (no output)')}</pre>`;
+
+                const result = output.join('') || 'Code executed successfully (no output)';
+                outputDiv.innerHTML = `<pre class="success">${escapeHtml(result)}</pre>`;
+                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide';
+
             } catch (err) {
-                outputDiv.innerHTML = `<pre style="color:#ea4335;">Error: ${escapeHtml(err.message)}</pre>`;
+                outputDiv.innerHTML = `<pre class="error">${escapeHtml(err.toString())}</pre>`;
+                btn.innerHTML = '<i class="fa-solid fa-play"></i> Run';
             }
         }
 
@@ -994,13 +1190,6 @@
             const chat = chats.find(c => c.id === currentChatId);
             if (!chat) return;
 
-            // Update title on first message
-            if (chat.messages.length === 0 && content) {
-                chat.title = content.slice(0, 30) + (content.length > 30 ? '...' : '');
-                document.getElementById('topTitle').textContent = chat.title;
-                renderChatList();
-            }
-
             const userMsg = {
                 role: 'user',
                 content: content,
@@ -1010,6 +1199,11 @@
             chat.messages.push(userMsg);
             saveChats();
             renderMessage(userMsg);
+
+            // Generate title if needed
+            if (chat.needsTitle && content) {
+                generateChatTitle(chat, content);
+            }
 
             // Clear input
             input.value = '';
@@ -1093,10 +1287,6 @@
         function scrollToBottom() {
             const chatArea = document.getElementById('chatArea');
             chatArea.scrollTop = chatArea.scrollHeight;
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
         }
 
         // Close modal on overlay click
