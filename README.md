@@ -1,5 +1,6 @@
 # Kairox AI
 
-_Single file edition_
+_Multi-page edition_
 
----
+- HTML: `/public/*.html`
+- Scripts: `/public/scripts/*.js`
