@@ -42,7 +42,7 @@ You can access settings by clicking on your profile icon in the top right corner
 ## Dev Notes
 
 **Change API provider**
-In order to change your API provider, you must fork the repo and edit the to`public/chat.html`
+In order to change your API provider, you must fork the repo and edit line 2 of `public/scripts/state.js`, to match the API url of your provider.
 
 **API key rotation**
 The API key found in the commit history has been deleted and rotated. It is completely inactive.
