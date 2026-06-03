@@ -50,3 +50,8 @@ In order to change your API provider, you must fork the repo and edit line 2 of 
 
 **API key rotation**
 The API key found in the commit history has been deleted and rotated. It is completely inactive.
+
+<br /><hr />
+<div align="right">
+  <sub>&copy; 2026 kairox</sub>
+</div>
