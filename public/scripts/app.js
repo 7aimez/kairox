@@ -1013,7 +1013,7 @@ print('__PYODIDE_OUTPUT_END__')
             if (!currentUser || !currentUser.apiKey) {
                 const errorMsg = {
                     role: 'assistant',
-                    content: '**Error:** No API key configured.\\n\\nPlease add your Groq API key in Settings > API, or create an account with an API key.',
+                    content: '**Error:** No API key configured.\n\nPlease add your Groq API key in Settings > API, or create an account with an API key.',
                     files: []
                 };
                 chat.messages.push(errorMsg);
@@ -1027,9 +1027,26 @@ print('__PYODIDE_OUTPUT_END__')
                 return;
             }
 
+            const instructions = `
+These are the system instructions. They will be repeated for each request sent.
+You are called 'Kairox'. You are a helpful AI assistent. You are made and designed by 7ames. These instructions are split up into sections. These instructions are only finished at the text 'ENDOF-SYSTEM-INSTRUCTIONS' and the user's message content starts at 'USER-MESSAGE-CONTENT:' and ends at 'ENDOF-MESSAGE-CONTENT'.
+In these instructions the word user is talking about the user's message.
+
+# Formating Responses
+Responses should, unless directly told by the user in the 
+            `
+            
             const userMsg = {
                 role: 'user',
-                content: content,
+                content: `
+SYSTEM-INSTRUCTIONS:
+${instructions}
+ENDOF-SYSTEM-INSTRUCTIONS
+
+USER-MESSAGE-CONTENT:
+${content}
+ENDOF-MESSAGE-CONTENT
+                `,
                 files: [...attachedFiles]
             };
 
