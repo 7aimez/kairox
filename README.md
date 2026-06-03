@@ -1,14 +1,16 @@
 <div align="center">
   <img width="200px" height="200px" alt="kairox-logo" src="static/logo.png" />
-  <h1>Kairox AI</h1>
-  <b>MUPA Edition</b>
+  <h1>
+    Kairox AI - v1.3.7
+  </h1>
+  <b>API Manager Edition</b>
   <hr /><br />
 </div>
 
 
 ## Welcome to Kairox 👋
 
-Kairox is a streamlined, open-source Groq AI interface designed for speed and flexibility. By connecting your own Groq API key, you unlock access to ultra-fast inference models without the bloat of traditional AI wrappers. [**Get started ◹**](https://kairox-ai.onrender.com)
+Kairox is a streamlined, open-source AI API interface designed for speed and flexibility. By connecting your own API key (Groq API by default), you unlock access to ultra-fast inference models without the bloat of traditional AI wrappers. [**Get started ◹**](https://kairox-ai.onrender.com)
 
 
 ## Screenshot
