@@ -3,7 +3,7 @@
   <h1>
     Kairox AI - v1.3.7
   </h1>
-  <b>API Manager Edition</b>
+  <b>Robust API Manager</b>
   <hr /><br />
 </div>
 
