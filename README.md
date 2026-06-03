@@ -35,6 +35,8 @@ You can access settings by clicking on your profile icon in the top right corner
 
 ## Available Models
 
+_For default Groq Cloud API_
+
 - Llama 3.3 70B Versatile (recommended)
 - Llama 3.1 8B Instant
 - Llama 3 70B
