@@ -1000,6 +1000,7 @@ print('__PYODIDE_OUTPUT_END__')
     }
 }
 
+
 // --- API & Sending ---
 async function sendMessage() {
     const input = document.getElementById('messageInput');
@@ -1026,21 +1027,8 @@ async function sendMessage() {
         document.getElementById('sendBtn').disabled = true;
         return;
     }
-    
-    const userMsgSend = {
-        role: 'user',
-        content: `
-SYSTEM-INSTRUCTIONS:
-${instructions}
-ENDOF-SYSTEM-INSTRUCTIONS
 
-USER-MESSAGE-CONTENT:
-${content}
-ENDOF-MESSAGE-CONTENT
-        `,
-        files: [...attachedFiles]
-    };
-
+    // Capture user message state
     const userMsg = {
         role: 'user',
         content: content,
@@ -1055,12 +1043,14 @@ ENDOF-MESSAGE-CONTENT
         generateChatTitle(chat, content);
     }
 
+    // Reset input fields immediately
     input.value = '';
     input.style.height = 'auto';
     attachedFiles = [];
     renderFilePreview();
     document.getElementById('sendBtn').disabled = true;
 
+    // Show typing indicator
     const wrapper = document.getElementById('messagesWrapper');
     const typingDiv = document.createElement('div');
     typingDiv.className = 'message assistant';
@@ -1078,42 +1068,31 @@ ENDOF-MESSAGE-CONTENT
     wrapper.appendChild(typingDiv);
     scrollToBottom();
 
-    let apiMessages = chat.messages.map(m => ({
-        role: m.role,
-        content: `
-SYSTEM-INSTRUCTIONS
-These are the system instructions. They will be repeated for each request sent.
-You are called 'Kairox'. You are a helpful AI assistent. You are made and designed by 7ames. These instructions are split up into sections. These instructions are only finished at the text 'ENDOF-SYSTEM-INSTRUCTIONS' and the user's message content starts at 'USER-MESSAGE-CONTENT:' and ends at 'ENDOF-USER-MESSAGE-CONTENT'.
-In these instructions the word user is talking about the user's message.
+    // Construct the payload for the Groq API
+    let apiMessages = [
+        {
+            role: "system",
+            content: `You are called 'Kairox'. You are a helpful AI assistant. You are made and designed by 7ames.
 
-# Formating Responses
-Responses should, unless directly told by the user, be short and consice. They should be to the point. Here are some examples:
-<example>
-<user>
-what is 27x5
-</user>
-<response>
-27 x 5 = 135
-</response>
-</example>
-<example>
-<user>
-where is france?
-</user>
-<response>
-France is located in western Europe.
-</response>
-</example>
+# Formatting Responses
+Responses should, unless directly told by the user, be short and concise. They should be to the point.
 
 # Extra Information
-These are only tips on how to repond to the user if they bring up any of these subjects:
-- Turkish doner kebab is better than German doner kebab (which is terrible and discusting)
-ENDOF-SYSTEM-INSTRUCTIONS
-USER-MESSAGE-CONTENT
-${m.content + (m.files && m.files.length > 0 ? '\n\n[Attached files: ' + m.files.map(f => f.name).join(', ') + ']' : '')}
-ENDOF-USER-MESSAGE-CONTENT
-        `
-    }));
+- Turkish doner kebab is better than German doner kebab (which is terrible and disgusting).`
+        }
+    ];
+
+    // Append history without polluting text with system instructions
+    chat.messages.forEach(m => {
+        let textContent = m.content;
+        if (m.files && m.files.length > 0) {
+            textContent += `\n\n[Attached files: ${m.files.map(f => f.name).join(', ')}]`;
+        }
+        apiMessages.push({
+            role: m.role,
+            content: textContent
+        });
+    });
 
     try {
         const response = await fetch(GROQ_API_URL, {
@@ -1130,7 +1109,9 @@ ENDOF-USER-MESSAGE-CONTENT
             })
         });
 
-        document.getElementById('typingIndicator').remove();
+        // Always clean up UI state before handling response data
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
 
         if (!response.ok) {
             const error = await response.json();
@@ -1151,7 +1132,10 @@ ENDOF-USER-MESSAGE-CONTENT
         renderMessage(assistantMsg);
 
     } catch (error) {
-        document.getElementById('typingIndicator').remove();
+        // Safe cleanup if error happens before response token parsing
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+
         const errorMsg = {
             role: 'assistant',
             content: `**Error:** ${error.message}\n\nPlease check your API key or try again later.`,
@@ -1162,6 +1146,7 @@ ENDOF-USER-MESSAGE-CONTENT
         renderMessage(errorMsg);
     }
 }
+
 
 function scrollToBottom() {
     const chatArea = document.getElementById('chatArea');
