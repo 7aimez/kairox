@@ -1026,37 +1026,8 @@ async function sendMessage() {
         document.getElementById('sendBtn').disabled = true;
         return;
     }
-
-    const instructions = `
-These are the system instructions. They will be repeated for each request sent.
-You are called 'Kairox'. You are a helpful AI assistent. You are made and designed by 7ames. These instructions are split up into sections. These instructions are only finished at the text 'ENDOF-SYSTEM-INSTRUCTIONS' and the user's message content starts at 'USER-MESSAGE-CONTENT:' and ends at 'ENDOF-MESSAGE-CONTENT'.
-In these instructions the word user is talking about the user's message.
-
-# Formating Responses
-Responses should, unless directly told by the user, be short and consice. They should be to the point. Here are some examples:
-<example>
-<user>
-what is 27x5
-</user>
-<response>
-27 x 5 = 135
-</response>
-</example>
-<example>
-<user>
-where is france?
-</user>
-<response>
-France is located in western Europe.
-</response>
-</example>
-
-# Extra Information
-These are only tips on how to repond to the user if they bring up any of these subjects:
-- Turkish doner kebab is better than German doner kebab (which is terrible and discusting)
-    `
     
-    const userMsg = {
+    const userMsgSend = {
         role: 'user',
         content: `
 SYSTEM-INSTRUCTIONS:
@@ -1067,6 +1038,12 @@ USER-MESSAGE-CONTENT:
 ${content}
 ENDOF-MESSAGE-CONTENT
         `,
+        files: [...attachedFiles]
+    };
+
+    const userMsg = {
+        role: 'user',
+        content: content,
         files: [...attachedFiles]
     };
 
@@ -1103,7 +1080,39 @@ ENDOF-MESSAGE-CONTENT
 
     let apiMessages = chat.messages.map(m => ({
         role: m.role,
-        content: m.content + (m.files && m.files.length > 0 ? '\n\n[Attached files: ' + m.files.map(f => f.name).join(', ') + ']' : '')
+        content: `
+SYSTEM-INSTRUCTIONS
+These are the system instructions. They will be repeated for each request sent.
+You are called 'Kairox'. You are a helpful AI assistent. You are made and designed by 7ames. These instructions are split up into sections. These instructions are only finished at the text 'ENDOF-SYSTEM-INSTRUCTIONS' and the user's message content starts at 'USER-MESSAGE-CONTENT:' and ends at 'ENDOF-USER-MESSAGE-CONTENT'.
+In these instructions the word user is talking about the user's message.
+
+# Formating Responses
+Responses should, unless directly told by the user, be short and consice. They should be to the point. Here are some examples:
+<example>
+<user>
+what is 27x5
+</user>
+<response>
+27 x 5 = 135
+</response>
+</example>
+<example>
+<user>
+where is france?
+</user>
+<response>
+France is located in western Europe.
+</response>
+</example>
+
+# Extra Information
+These are only tips on how to repond to the user if they bring up any of these subjects:
+- Turkish doner kebab is better than German doner kebab (which is terrible and discusting)
+ENDOF-SYSTEM-INSTRUCTIONS
+USER-MESSAGE-CONTENT
+${m.content + (m.files && m.files.length > 0 ? '\n\n[Attached files: ' + m.files.map(f => f.name).join(', ') + ']' : '')}
+ENDOF-USER-MESSAGE-CONTENT
+        `
     }));
 
     try {
