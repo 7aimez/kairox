@@ -39,3 +39,10 @@ You can access settings by clicking on your profile icon in the top right corner
 - Mixtral 8x7B
 - Gemma 2 9B
 
+## Dev Notes
+
+**Change API provider**
+In order to change your API provider, you must fork the repo and edit the to`public/chat.html`
+
+**API key rotation**
+The API key found in the commit history has been deleted and rotated. It is completely inactive.
